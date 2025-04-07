@@ -80,11 +80,20 @@ for interval_id, info in interval_map.items():
     grib_files = find_files_for_time_interval(info["start"], info["end"])
     if grib_files:
         ts_map[interval_id] = grib_files
+        valid_interval_ids.append(interval_id)
+        # print("tsmap")
+        # print(ts_map[interval_id])
     else:
         print(f"[WARN] No GRIB files found for interval {interval_id}")
 
 
 collections = list(data_collection.keys())
+
+def get_ts_map_as_list(ts_map, valid_interval_ids):
+    return [
+        ts_map[interval_id]
+        for interval_id in valid_interval_ids
+    ]
 
 # ----------------------------
 # Rules
@@ -92,17 +101,17 @@ collections = list(data_collection.keys())
 
 rule make_index_files:
     input:
-        #lambda wildcards: ts_map[wildcards.interval_id]
-        lambda wildcards: [
-            f"{grib_index_root}/{wildcards.interval_id}/{wildcards.gribfile}.index"
-            for gribfile in ts_map[wildcards.interval_id]
-        ]
+        #ts_map must be a list or tuple
+        get_ts_map_as_list(ts_map, valid_interval_ids)
     output:
         touch("done")
     run:
 
+        #print(ts_map)
+
         for fp_gribfile in map(Path, input):
-            print(fp_gribfile)
+            #print(fp_gribfile)
+            a=1
 
 
 # rule all:
