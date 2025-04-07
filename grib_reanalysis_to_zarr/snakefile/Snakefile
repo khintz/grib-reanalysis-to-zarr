@@ -90,27 +90,43 @@ collections = list(data_collection.keys())
 # Rules
 # ----------------------------
 
-rule all:
+rule make_index_files:
     input:
-        expand("zarr_combined/{collection}.zarr", collection=collections)
-
-rule index_gribs:
-    input:
-        lambda wildcards: ts_map[wildcards.interval_id]
+        #lambda wildcards: ts_map[wildcards.interval_id]
+        lambda wildcards: [
+            f"{grib_index_root}/{wildcards.interval_id}/{wildcards.gribfile}.index"
+            for gribfile in ts_map[wildcards.interval_id]
+        ]
     output:
-        touch("indexes/{interval_id}/.done")
+        touch("done")
     run:
-        import gribscan
-
-        interval_id = wildcards.interval_id
-        Path(output[0]).parent.mkdir(parents=True, exist_ok=True)
 
         for fp_gribfile in map(Path, input):
-            fp_index = grib_index_root / f"{fp_gribfile.as_posix()}.index"
-            fp_index.parent.mkdir(parents=True, exist_ok=True)
-            gribscan.write_index(gribfile=fp_gribfile, idxfile=fp_index)
+            print(fp_gribfile)
 
-        Path(output[0]).touch()
+
+# rule all:
+#     input:
+#         expand("zarr_combined/{collection}.zarr", collection=collections)
+
+
+# rule index_gribs:
+#     input:
+#         lambda wildcards: ts_map[wildcards.interval_id]
+#     output:
+#         touch("indexes/{interval_id}/.done")
+#     run:
+#         import gribscan
+
+#         interval_id = wildcards.interval_id
+#         Path(output[0]).parent.mkdir(parents=True, exist_ok=True)
+
+#         for fp_gribfile in map(Path, input):
+#             fp_index = grib_index_root / f"{fp_gribfile.as_posix()}.index"
+#             fp_index.parent.mkdir(parents=True, exist_ok=True)
+#             gribscan.write_index(gribfile=fp_gribfile, idxfile=fp_index)
+
+#         Path(output[0]).touch()
 
 # rule generate_refs:
 #     input:
