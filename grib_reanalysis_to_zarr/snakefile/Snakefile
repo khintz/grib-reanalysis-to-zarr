@@ -110,8 +110,9 @@ rule make_index_files:
         #print(ts_map)
 
         for fp_gribfile in map(Path, input):
-            #print(fp_gribfile)
             a=1
+            #print(fp_gribfile)
+
 
 
 # rule all:

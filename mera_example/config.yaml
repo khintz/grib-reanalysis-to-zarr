@@ -1,7 +1,7 @@
 #start: "1981-01-01T00:00"
-start: "2017-12-01T00:00"
+start: "2017-11-01T00:00"
 end: "2018-01-01T00:00"
-step: "PT3H"
+step: "P1M" # One file per month per parameter
 
 rechunk_to:
   time: 256
